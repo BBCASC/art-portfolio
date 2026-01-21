@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Parallax Background Layers */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #0f0f1a 0%, #0a0a0a 100%);
+            z-index: -5;
+        }
+
+        .parallax-layer {
+            position: fixed;
+            width: 100%;
+            height: 500%;
+            top: -200%;
+            left: 0;
+        }
+
+        .layer-1 {
+            z-index: -4;
+            opacity: 0.2;
+        }
+
+        .layer-2 {
+            z-index: -3;
+            opacity: 0.25;
+        }
+
+        .layer-3 {
+            z-index: -2;
+            opacity: 0.3;
+        }
+
+        .layer-4 {
+            z-index: -1;
+            opacity: 0.35;
+        }
+
+        .layer-5 {
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .layer-6 {
+            z-index: 1;
+            opacity: 0.45;
+        }
+
+        .layer-7 {
+            z-index: 2;
+            opacity: 0.5;
+        }
+
+        /* Geometric shapes for parallax */
+        .shape {
+            position: absolute;
+            opacity: 0.15;
+            transition: all 0.3s ease-out;
+        }
+
+        .shape.glow {
+            filter: blur(2px);
+            box-shadow: 0 0 25px currentColor, 0 0 50px currentColor;
+            animation: pulse 5s ease-in-out infinite;
+        }
+
+        .shape.rotate {
+            animation: rotate 25s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.1;
+                filter: blur(2px);
+            }
+            50% {
+                opacity: 0.2;
+                filter: blur(3px);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Mouse trail effect */
+        .trail-particle {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: #4a90e2;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px #4a90e2;
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0);
+            }
+        }
+
+        .square {
+            border: 2px solid #4a90e2;
+        }
+
+        .square.glow {
+            border-color: #4a90e2;
+            color: #4a90e2;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 86px solid #e24a90;
+            opacity: 0.08;
+        }
+
+        .line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #64b5f6, transparent);
+        }
+
+        .line.glow {
+            box-shadow: 0 0 10px #64b5f6;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #4a90e2;
+            border-radius: 50%;
+            opacity: 0.2;
+        }
+
+        .dot.glow {
+            box-shadow: 0 0 8px #4a90e2;
+        }
+
+        .circle-outline {
+            border: 2px solid #9c27b0;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .circle-outline.glow {
+            box-shadow: 0 0 15px #9c27b0;
+            border-color: #9c27b0;
+        }
+
+        /* Subtle gradient orbs */
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(40px, -25px) scale(1.05);
+            }
+            66% {
+                transform: translate(-30px, 30px) scale(0.95);
+            }
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 80px 20px 60px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeInDown 1s forwards;
+            background: linear-gradient(135deg, #64b5f6 0%, #4a90e2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            letter-spacing: 3px;
+            opacity: 0;
+            animation: fadeInUp 1s 0.3s forwards;
+        }
+        
+        .guide {
+            font-size: 1rem;
+            color: #888;
+            letter-spacing: 3px;
+            opacity: 0;
+            animation: fadeInUp 1.1s 0.3s forwards;
+        }
+
+        /* Timeline Container */
+        .timeline-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px 100px;
+            position: relative;
+        }
+
+        /* Timeline Line */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                transparent, 
+                #4a90e2 20%, 
+                #64b5f6 50%,
+                #4a90e2 80%,
+                transparent);
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
+        }
+
+        /* Timeline Item */
+        .timeline-item {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 100px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item:nth-child(odd) .content {
+            margin-right: auto;
+            margin-left: 0;
+            padding-right: 60px;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) .content {
+            margin-left: auto;
+            margin-right: 0;
+            padding-left: 60px;
+            text-align: left;
+        }
+
+        .content {
+            width: 45%;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s ease;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .content:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: scale(1.02) translateY(-3px);
+            box-shadow: 0 20px 60px rgba(74, 144, 226, 0.2),
+                        0 0 40px rgba(100, 181, 246, 0.1);
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        /* Timeline Dot */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #64b5f6, #4a90e2);
+            border-radius: 50%;
+            border: 4px solid #0a0a0a;
+            z-index: 10;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.4);
+        }
+
+        .timeline-item:hover::before {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #64b5f6, #4a90e2);
+            box-shadow: 0 0 25px rgba(100, 181, 246, 0.6);
+        }
+
+        /* Content Styling */
+        .artwork-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4a90e2;
+            font-size: 1.5rem;
+            font-style: italic;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .content:hover .artwork-image {
+            transform: scale(1.03);
+        }
+
+        .artwork-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #64b5f6, #4a90e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .artwork-date {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .artwork-description {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .timeline-line {
+                left: 30px;
+            }
+
+            .timeline-item {
+                justify-content: flex-start;
+            }
+
+            .timeline-item::before {
+                left: 30px;
+            }
+
+            .timeline-item:nth-child(odd) .content,
+            .timeline-item:nth-child(even) .content {
+                width: calc(100% - 80px);
+                margin-left: 80px;
+                margin-right: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="parallax-bg"></div>
+    <div class="parallax-layer layer-1" id="layer1"></div>
+    <div class="parallax-layer layer-2" id="layer2"></div>
+    <div class="parallax-layer layer-3" id="layer3"></div>
+    <div class="parallax-layer layer-4" id="layer4"></div>
+    <div class="parallax-layer layer-5" id="layer5"></div>
+    <div class="parallax-layer layer-6" id="layer6"></div>
+    <div class="parallax-layer layer-7" id="layer7"></div>
+
+    <header>
+        <h1>Brayden Bird</h1>
+        <p class="subtitle">ART PORTFOLIO</p>
+        <p class="guide">Scroll To View</p>
+    </header>
+
+    <div class="timeline-container">
+        <div class="timeline-line"></div>
+
+        <!-- TIMELINE ITEMS -->
+        
+        <div class="timeline-item">
+            <div class="content">
+                <div class="artwork-image">[Placeholder]</div>
+                <h3 class="artwork-title">Placeholder Title</h3>
+                <p class="artwork-date">Placeholder Date</p>
+                <p class="artwork-description">Placeholder Description</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="content">
+                <div class="artwork-image">[Placeholder]</div>
+                <h3 class="artwork-title">Placeholder Title</h3>
+                <p class="artwork-date">Placeholder Date</p>
+                <p class="artwork-description">Placeholder Description</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="content">
+                <div class="artwork-image">[Placeholder]</div>
+                <h3 class="artwork-title">Placeholder Title</h3>
+                <p class="artwork-date">Placeholder Date</p>
+                <p class="artwork-description">Placeholder Description</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="content">
+                <div class="artwork-image">[Placeholder]</div>
+                <h3 class="artwork-title">Placeholder Title</h3>
+                <p class="artwork-date">Placeholder Date</p>
+                <p class="artwork-description">Placeholder Description</p>
+            </div>
+        </div>
+
+        <!-- TO ADD MORE ARTWORK: Copy the entire timeline-item div above and paste it here.
+             Then update the image, title, date, and description. -->
+
+    </div>
+
+    <script>
+        const layer1 = document.getElementById('layer1');
+        const layer2 = document.getElementById('layer2');
+        const layer3 = document.getElementById('layer3');
+        const layer4 = document.getElementById('layer4');
+        const layer5 = document.getElementById('layer5');
+        const layer6 = document.getElementById('layer6');
+        const layer7 = document.getElementById('layer7');
+
+        // Create subtle gradient orbs (reduced from 8 to 4)
+        const colors = [
+            ['#4a90e2', '#64b5f6'],
+            ['#9c27b0', '#e24a90']
+        ];
+
+        for (let i = 0; i < 4; i++) {
+            const orb = document.createElement('div');
+            orb.className = 'gradient-orb';
+            const size = Math.random() * 300 + 250;
+            const colorPair = colors[i % colors.length];
+            orb.style.width = size + 'px';
+            orb.style.height = size + 'px';
+            orb.style.background = `radial-gradient(circle, ${colorPair[0]}, ${colorPair[1]})`;
+            orb.style.left = Math.random() * 100 + '%';
+            orb.style.top = Math.random() * 300 + '%';
+            orb.style.animationDelay = Math.random() * 8 + 's';
+            orb.style.animationDuration = (Math.random() * 15 + 20) + 's';
+            layer1.appendChild(orb);
+        }
+
+        // Layer 1 - Reduced squares (60 -> 30)
+        for (let i = 0; i < 30; i++) {
+            const square = document.createElement('div');
+            square.className = 'shape square' + (i % 4 === 0 ? ' glow' : '') + ' rotate';
+            const size = Math.random() * 120 + 80;
+            square.style.width = size + 'px';
+            square.style.height = size + 'px';
+            square.style.left = Math.random() * 100 + '%';
+            square.style.top = Math.random() * 400 + '%';
+            square.style.animationDuration = (Math.random() * 70 + 50) + 's';
+            square.style.animationDelay = Math.random() * 5 + 's';
+            square.style.transform = `rotate(${Math.random() * 360}deg)`;
+            layer1.appendChild(square);
+        }
+
+        // Layer 2 - Reduced (100 -> 40)
+        for (let i = 0; i < 40; i++) {
+            if (i % 2 === 0) {
+                const square = document.createElement('div');
+                square.className = 'shape square' + (i % 5 === 0 ? ' glow' : '');
+                const size = Math.random() * 80 + 50;
+                square.style.width = size + 'px';
+                square.style.height = size + 'px';
+                square.style.left = Math.random() * 100 + '%';
+                square.style.top = Math.random() * 400 + '%';
+                square.style.transform = `rotate(${Math.random() * 360}deg)`;
+                square.style.animation = `float ${Math.random() * 9 + 7}s ease-in-out infinite`;
+                square.style.animationDelay = Math.random() * 4 + 's';
+                layer2.appendChild(square);
+            } else {
+                const circle = document.createElement('div');
+                circle.className = 'shape circle-outline' + (i % 5 === 0 ? ' glow' : '') + ' rotate';
+                const size = Math.random() * 70 + 40;
+                circle.style.width = size + 'px';
+                circle.style.height = size + 'px';
+                circle.style.left = Math.random() * 100 + '%';
+                circle.style.top = Math.random() * 400 + '%';
+                circle.style.animationDuration = (Math.random() * 60 + 40) + 's';
+                circle.style.animationDelay = Math.random() * 4 + 's';
+                layer2.appendChild(circle);
+            }
+        }
+
+        // Layer 3 - Reduced lines (140 -> 50)
+        for (let i = 0; i < 50; i++) {
+            const line = document.createElement('div');
+            line.className = 'shape line' + (i % 4 === 0 ? ' glow' : '');
+            line.style.width = Math.random() * 300 + 150 + 'px';
+            line.style.left = Math.random() * 100 + '%';
+            line.style.top = Math.random() * 400 + '%';
+            line.style.transform = `rotate(${Math.random() * 180}deg)`;
+            line.style.animation = `float ${Math.random() * 12 + 10}s ease-in-out infinite`;
+            line.style.animationDelay = Math.random() * 5 + 's';
+            layer3.appendChild(line);
+        }
+
+        // Layer 4 - Reduced (150 -> 60)
+        for (let i = 0; i < 60; i++) {
+            if (i % 2 === 0) {
+                const square = document.createElement('div');
+                square.className = 'shape square' + (i % 5 === 0 ? ' glow' : '');
+                const size = Math.random() * 40 + 20;
+                square.style.width = size + 'px';
+                square.style.height = size + 'px';
+                square.style.left = Math.random() * 100 + '%';
+                square.style.top = Math.random() * 400 + '%';
+                square.style.transform = `rotate(${Math.random() * 360}deg)`;
+                square.style.animation = `float ${Math.random() * 8 + 6}s ease-in-out infinite`;
+                square.style.animationDelay = Math.random() * 4 + 's';
+                layer4.appendChild(square);
+            } else {
+                const triangle = document.createElement('div');
+                triangle.className = 'shape triangle rotate';
+                triangle.style.left = Math.random() * 100 + '%';
+                triangle.style.top = Math.random() * 400 + '%';
+                triangle.style.animationDuration = (Math.random() * 60 + 40) + 's';
+                triangle.style.animationDelay = Math.random() * 4 + 's';
+                layer4.appendChild(triangle);
+            }
+        }
+
+        // Layer 5 - Reduced (180 -> 70)
+        for (let i = 0; i < 70; i++) {
+            if (i % 3 === 0) {
+                const circle = document.createElement('div');
+                circle.className = 'shape circle-outline' + (i % 5 === 0 ? ' glow' : '');
+                const size = Math.random() * 50 + 25;
+                circle.style.width = size + 'px';
+                circle.style.height = size + 'px';
+                circle.style.left = Math.random() * 100 + '%';
+                circle.style.top = Math.random() * 400 + '%';
+                circle.style.animation = `float ${Math.random() * 7 + 5}s ease-in-out infinite`;
+                circle.style.animationDelay = Math.random() * 3 + 's';
+                layer5.appendChild(circle);
+            } else {
+                const dot = document.createElement('div');
+                dot.className = 'shape dot' + (i % 4 === 0 ? ' glow' : '');
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 400 + '%';
+                dot.style.animation = `float ${Math.random() * 6 + 4}s ease-in-out infinite`;
+                dot.style.animationDelay = Math.random() * 3 + 's';
+                layer5.appendChild(dot);
+            }
+        }
+
+        // Layer 6 - Reduced (170 -> 60)
+        for (let i = 0; i < 60; i++) {
+            if (i % 2 === 0) {
+                const triangle = document.createElement('div');
+                triangle.className = 'shape triangle rotate';
+                triangle.style.left = Math.random() * 100 + '%';
+                triangle.style.top = Math.random() * 400 + '%';
+                triangle.style.animationDuration = (Math.random() * 50 + 35) + 's';
+                triangle.style.animationDelay = Math.random() * 3 + 's';
+                triangle.style.transform = `scale(0.6) rotate(${Math.random() * 360}deg)`;
+                layer6.appendChild(triangle);
+            } else {
+                const square = document.createElement('div');
+                square.className = 'shape square rotate';
+                const size = Math.random() * 25 + 15;
+                square.style.width = size + 'px';
+                square.style.height = size + 'px';
+                square.style.left = Math.random() * 100 + '%';
+                square.style.top = Math.random() * 400 + '%';
+                square.style.animationDuration = (Math.random() * 50 + 35) + 's';
+                square.style.animationDelay = Math.random() * 3 + 's';
+                layer6.appendChild(square);
+            }
+        }
+
+        // Layer 7 - Reduced dots (300 -> 100)
+        for (let i = 0; i < 100; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'shape dot' + (i % 3 === 0 ? ' glow' : '');
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.top = Math.random() * 400 + '%';
+            dot.style.animation = `float ${Math.random() * 5 + 3}s ease-in-out infinite`;
+            dot.style.animationDelay = Math.random() * 2 + 's';
+            layer7.appendChild(dot);
+        }
+
+        // Parallax with smoother mouse tracking
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetMouseX = 0;
+        let targetMouseY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        // Subtle mouse trail
+        let lastTrailTime = 0;
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastTrailTime > 40) {
+                createTrailParticle(e.clientX, e.clientY);
+                lastTrailTime = now;
+            }
+        });
+
+        function createTrailParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'trail-particle';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            const colors = ['#4a90e2', '#64b5f6'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.background = color;
+            particle.style.boxShadow = `0 0 10px ${color}`;
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+
+        function animateParallax() {
+            const scrolled = window.pageYOffset;
+            const time = Date.now() * 0.0001;
+            
+            mouseX += (targetMouseX - mouseX) * 0.05;
+            mouseY += (targetMouseY - mouseY) * 0.05;
+            
+            layer1.style.transform = `translateY(${scrolled * -0.05}px) translateX(${mouseX * 10}px) scale(${1 + Math.sin(time * 0.5) * 0.05})`;
+            layer2.style.transform = `translateY(${scrolled * -0.08}px) translateX(${mouseX * 15}px) rotate(${Math.sin(time * 0.3) * 2}deg)`;
+            layer3.style.transform = `translateY(${scrolled * -0.12 + Math.sin(time * 0.8) * 15}px) translateX(${mouseX * 20}px)`;
+            layer4.style.transform = `translateY(${scrolled * -0.18}px) translateX(${mouseX * 25 + Math.cos(time * 0.6) * 20}px) scale(${1 + Math.sin(time * 0.7) * 0.03})`;
+            layer5.style.transform = `translateY(${scrolled * -0.25}px) translateX(${mouseX * 30}px) translateY(${mouseY * 15}px)`;
+            layer6.style.transform = `translateY(${scrolled * -0.32}px) translateX(${mouseX * 35}px) rotate(${Math.sin(time * 0.5) * 3}deg)`;
+            layer7.style.transform = `translateY(${scrolled * -0.40 + Math.sin(time) * 10}px) translateX(${mouseX * 40}px) translateY(${mouseY * 20}px)`;
+            
+            requestAnimationFrame(animateParallax);
+        }
+        
+        animateParallax();
+
+        // Intersection Observer for timeline items
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.2
+        });
+
+        timelineItems.forEach(item => {
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>
